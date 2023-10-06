@@ -14,7 +14,7 @@ class LineNode: SCNNode {
         let nodeZAlign = SCNNode()
         nodeZAlign.eulerAngles.x = Float.pi/2
         
-        let box = SCNBox(width: 0.003, height: height, length: 0.001, chamferRadius: 0)
+        let box = SCNBox(width: 0.001, height: height, length: 0.001, chamferRadius: 0)
         let material = SCNMaterial()
         material.diffuse.contents = color
         box.materials = [material]

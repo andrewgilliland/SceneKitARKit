@@ -3,6 +3,8 @@ import Combine
 import SwiftUI
 
 struct ARViewContainer: UIViewRepresentable {
+    @ObservedObject var arObservable: ARObservable
+    
     
     class Coordinator: NSObject, ARSCNViewDelegate {
         var sceneView = ARSCNView()
@@ -17,8 +19,10 @@ struct ARViewContainer: UIViewRepresentable {
         private var outlineNode = SCNNode()
         
         private var targetNode: SCNNode?
+        @ObservedObject var arObservable: ARObservable
         
-        override init() {
+        init(arObservable: ARObservable) {
+            self.arObservable = arObservable
             super.init()
 
             configuration.environmentTexturing = .automatic
@@ -38,6 +42,7 @@ struct ARViewContainer: UIViewRepresentable {
             sceneView.addSubview(coachingOverlay)
 
             subscribeToActionStream()
+            
         }
 
         func renderer(_: SCNSceneRenderer, didAdd _: SCNNode, for anchor: ARAnchor) {
@@ -46,6 +51,7 @@ struct ARViewContainer: UIViewRepresentable {
                 self.coachingOverlay.setActive(false, animated: true)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                     print("coaching done")
+                    self.arObservable.coachingOverlayViewDidDeactivate = true
                 }
             }
         }
@@ -91,7 +97,7 @@ struct ARViewContainer: UIViewRepresentable {
                 let results = sceneView.session.raycast(raycastQuery)
                 
                 if let result = results.first {
-                    let nodeGeometry = SCNSphere(radius: 0.004)
+                    let nodeGeometry = SCNSphere(radius: 0.0025)
                     let material = SCNMaterial()
                     material.diffuse.contents = UIColor(white: 1.0, alpha: 0.9)
                     nodeGeometry.materials = [material]
@@ -185,6 +191,7 @@ struct ARViewContainer: UIViewRepresentable {
             }
             
             // if this returns disable add button
+            print("No raycast returned!!!")
             return SCNNode()
         }
     }
@@ -196,7 +203,7 @@ struct ARViewContainer: UIViewRepresentable {
     func updateUIView(_ uiView: ARSCNView, context: Context) {}
     
     func makeCoordinator() -> Coordinator {
-        Coordinator()
+        Coordinator(arObservable: arObservable)
     }
 }
 
