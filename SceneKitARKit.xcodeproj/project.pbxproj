@@ -15,6 +15,7 @@
 		14D247272AD037D000B048DB /* ARManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D247262AD037D000B048DB /* ARManager.swift */; };
 		14D247292AD0394D00B048DB /* ARAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D247282AD0394D00B048DB /* ARAction.swift */; };
 		14D2472B2AD0398200B048DB /* MeasureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D2472A2AD0398200B048DB /* MeasureView.swift */; };
+		14D2472D2AD0605800B048DB /* LineNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D2472C2AD0605800B048DB /* LineNode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		14D247262AD037D000B048DB /* ARManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARManager.swift; sourceTree = "<group>"; };
 		14D247282AD0394D00B048DB /* ARAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARAction.swift; sourceTree = "<group>"; };
 		14D2472A2AD0398200B048DB /* MeasureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureView.swift; sourceTree = "<group>"; };
+		14D2472C2AD0605800B048DB /* LineNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineNode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,11 +64,12 @@
 				14D247142AD033A200B048DB /* AppDelegate.swift */,
 				14D247162AD033A200B048DB /* ContentView.swift */,
 				14D247242AD0364C00B048DB /* ARViewContainer.swift */,
-				14D2471A2AD033A300B048DB /* Assets.xcassets */,
-				14D2471C2AD033A300B048DB /* Preview Content */,
 				14D247262AD037D000B048DB /* ARManager.swift */,
 				14D247282AD0394D00B048DB /* ARAction.swift */,
 				14D2472A2AD0398200B048DB /* MeasureView.swift */,
+				14D2471A2AD033A300B048DB /* Assets.xcassets */,
+				14D2471C2AD033A300B048DB /* Preview Content */,
+				14D2472C2AD0605800B048DB /* LineNode.swift */,
 			);
 			path = SceneKitARKit;
 			sourceTree = "<group>";
@@ -149,6 +152,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14D2472D2AD0605800B048DB /* LineNode.swift in Sources */,
 				14D247272AD037D000B048DB /* ARManager.swift in Sources */,
 				14D2472B2AD0398200B048DB /* MeasureView.swift in Sources */,
 				14D247292AD0394D00B048DB /* ARAction.swift in Sources */,

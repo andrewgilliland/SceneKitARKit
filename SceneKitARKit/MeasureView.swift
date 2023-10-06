@@ -4,6 +4,11 @@ struct MeasureView: View {
     var body: some View {
         ARViewContainer().edgesIgnoringSafeArea(.all)
             .overlay {
+                ZStack {
+                    Image(systemName: "plus.circle")
+                        .foregroundColor(.white)
+                        .fontWeight(.semibold)
+                        .font(.title)
                 VStack {
                     Spacer()
                     
@@ -27,6 +32,7 @@ struct MeasureView: View {
                     }
                 }
                 .padding()
+                }
             }
     }
 }
