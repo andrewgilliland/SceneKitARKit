@@ -86,30 +86,14 @@ struct ARViewContainer: UIViewRepresentable {
 
         func addNode(option: Option) {
             let screenCenter = CGPoint(x: sceneView.bounds.midX, y: sceneView.bounds.midY)
-//            let hitTestResults = sceneView.hitTest(screenCenter, types: .featurePoint)
-//            if let hitResult = hitTestResults.first{
-//                let nodeGeometry = SCNSphere(radius: 0.008)
-//                let material = SCNMaterial()
-//                material.diffuse.contents = option.color
-//                nodeGeometry.materials = [material]
-//
-//                let node = SCNNode(geometry: nodeGeometry)
-//                node.position = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
-//                sceneView.scene.rootNode.addChildNode(node)
-//                nodes.append(node)
-//
-//                if nodes.count >= 2 {
-//                    calculate()
-//                }
-//            }
             
             if let raycastQuery = sceneView.raycastQuery(from: screenCenter, allowing: .estimatedPlane, alignment: .any) {
                 let results = sceneView.session.raycast(raycastQuery)
                 
                 if let result = results.first {
-                    let nodeGeometry = SCNSphere(radius: 0.008)
+                    let nodeGeometry = SCNSphere(radius: 0.004)
                     let material = SCNMaterial()
-                    material.diffuse.contents = option.color
+                    material.diffuse.contents = UIColor(white: 1.0, alpha: 0.9)
                     nodeGeometry.materials = [material]
                     
                     let node = SCNNode(geometry: nodeGeometry)
@@ -125,8 +109,8 @@ struct ARViewContainer: UIViewRepresentable {
         }
         
         func calculate() {
-            let start = nodes[0]
-            let end = nodes[1]
+            let start = nodes[nodes.count - 2]
+            let end = nodes[nodes.count - 1]
             let distance = sqrt(
                 pow(end.position.x - start.position.x, 2) +
                 pow(end.position.y - start.position.y, 2) +
@@ -143,8 +127,7 @@ struct ARViewContainer: UIViewRepresentable {
             
             updateText(text: finalValue, atPosition: end.position)
             
-            lineNode.removeFromParentNode()
-            lineNode = LineNode(from: start.position, to: end.position, color: UIColor.white)
+            lineNode = LineNode(from: start.position, to: end.position, color: UIColor(white: 1.0, alpha: 0.5))
             
             sceneView.scene.rootNode.addChildNode(lineNode)
             
@@ -190,7 +173,7 @@ struct ARViewContainer: UIViewRepresentable {
                 let results = sceneView.session.raycast(raycastQuery)
                 
                 if let result = results.first {
-                    let nodeGeometry = SCNSphere(radius: 0.008)
+                    let nodeGeometry = SCNSphere(radius: 0.005)
                     let material = SCNMaterial()
                     material.diffuse.contents = UIColor.green
                     nodeGeometry.materials = [material]
