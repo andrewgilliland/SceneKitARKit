@@ -16,15 +16,18 @@ struct ARViewContainer: UIViewRepresentable {
         private var textMeasure = SCNNode()
         private var outlineNode = SCNNode()
         
+        private var targetNode: SCNNode?
+        
         override init() {
             super.init()
 
+            configuration
             configuration.environmentTexturing = .automatic
             configuration.planeDetection = [.horizontal]
             configuration.worldAlignment = ARConfiguration.WorldAlignment.gravity
 
-            sceneView.delegate = self
             sceneView.session.run(configuration)
+            sceneView.delegate = self
             sceneView.layer.masksToBounds = true
 
             coachingOverlay.session = sceneView.session
@@ -48,6 +51,23 @@ struct ARViewContainer: UIViewRepresentable {
             }
         }
         
+        func renderer(_: SCNSceneRenderer, didUpdate _: SCNNode, for anchor: ARAnchor) {
+            
+            
+            DispatchQueue.main.async {
+                // Remove the previously added node if it exists
+                self.targetNode?.removeFromParentNode()
+                
+                // Add a new node at the current frame's location
+                let newTargetNode = self.addTarget()
+                self.sceneView.scene.rootNode.addChildNode(newTargetNode)
+                
+                // Update the reference to the added node
+                self.targetNode = newTargetNode
+            }
+            
+        }
+        
         func subscribeToActionStream() {
             ARManager.shared
                 .actionStream
@@ -58,10 +78,10 @@ struct ARViewContainer: UIViewRepresentable {
                         self?.addNode(option: option)
 
                     case .deleteLastPoint:
-                        print("delete last plant")
+                        print("delete last node")
 
                     case .removeAllAnchors:
-                        print("delete all plants")
+                        print("delete all node")
                     }
                 }
                 .store(in: &cancellables)
@@ -72,11 +92,8 @@ struct ARViewContainer: UIViewRepresentable {
             
             let screenCenter = CGPoint(x: sceneView.bounds.midX, y: sceneView.bounds.midY)
             let hitTestResults = sceneView.hitTest(screenCenter, types: .featurePoint)
-                
-//            print("\(hitTestResults)")
             
             if let hitResult = hitTestResults.first{
-//                print("\(hitResult)")
                 let nodeGeometry = SCNSphere(radius: 0.008)
                 let material = SCNMaterial()
                 material.diffuse.contents = option.color
@@ -150,6 +167,25 @@ struct ARViewContainer: UIViewRepresentable {
             
             sceneView.scene.rootNode.addChildNode(textMeasure)
             sceneView.scene.rootNode.addChildNode(outlineNode)
+        }
+        
+        func addTarget() -> SCNNode {
+            let screenCenter = CGPoint(x: sceneView.bounds.midX, y: sceneView.bounds.midY)
+            let hitTestResults = sceneView.hitTest(screenCenter, types: .featurePoint)
+            
+            if let hitResult = hitTestResults.first{
+                let nodeGeometry = SCNSphere(radius: 0.008)
+                let material = SCNMaterial()
+                material.diffuse.contents = UIColor.purple
+                nodeGeometry.materials = [material]
+                
+                let node = SCNNode(geometry: nodeGeometry)
+                node.position = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
+                return node
+                
+            }
+            
+            return SCNNode()
         }
     }
 
