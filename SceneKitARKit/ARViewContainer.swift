@@ -189,6 +189,14 @@ struct ARViewContainer: UIViewRepresentable {
                     
                     let node = SCNNode(geometry: nodeGeometry)
                     node.position = SCNVector3(result.worldTransform.columns.3.x, result.worldTransform.columns.3.y, result.worldTransform.columns.3.z)
+                    
+                    if let cameraNode = sceneView.pointOfView {
+                        let distance = getDistance(from: cameraNode, to: node)
+                        print("distance from camera: \(distance)")
+                        
+                        Measurement
+                    }
+                    
                     arObservable.onPlane = true
                     return node
                 }
@@ -197,6 +205,27 @@ struct ARViewContainer: UIViewRepresentable {
             // No plane detected
             arObservable.onPlane = false
             return SCNNode()
+        }
+        
+        func getCurrentFramePosition() -> SCNVector3 {
+            if let currentFrame = sceneView.session.currentFrame {
+                let cameraPosition = SCNVector3(
+                    currentFrame.camera.transform.columns.3.x,
+                    currentFrame.camera.transform.columns.3.y,
+                    currentFrame.camera.transform.columns.3.z)
+
+                return cameraPosition
+            }
+            return SCNVector3()
+        }
+        
+        func getDistance(from: SCNNode, to: SCNNode) -> Float {
+            let distance = sqrt(
+                pow(from.position.x - to.position.y, 2) +
+                pow(from.position.y - to.position.y, 2) +
+                pow(from.position.z - to.position.z, 2)
+            )
+            return distance
         }
     }
 
