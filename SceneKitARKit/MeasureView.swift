@@ -18,6 +18,21 @@ struct MeasureView: View {
                         }
                       
                         VStack {
+                            HStack {
+                                Spacer()
+                                
+                                ZStack {
+                                    Color.black
+                                        .frame(width: 100, height: 55)
+                                        .cornerRadius(8)
+                                        .opacity(arObservable.onPlane ? 1.0 : 0.25)
+                                    Text(arObservable.onPlane ? String(format: "%.3f", arObservable.distance) : "-")
+                                        .foregroundColor(.white)
+                                        .fontWeight(.semibold)
+                                        .font(.body)
+                                }
+                            }
+                            
                             Spacer()
                             
                             HStack {

@@ -194,7 +194,7 @@ struct ARViewContainer: UIViewRepresentable {
                         let distance = getDistance(from: cameraNode, to: node)
                         print("distance from camera: \(distance)")
                         
-                        Measurement
+                        arObservable.distance = distance
                     }
                     
                     arObservable.onPlane = true
