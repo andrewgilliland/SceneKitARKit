@@ -7,11 +7,26 @@ struct MeasureView: View {
                 VStack {
                     Spacer()
                     
-                    Button("Add Point") {
-                        ARManager.shared.actionStream.send(.addPoint(option: "Waz up"))
+                    HStack {
+
+                        Spacer()
+                    
+                    Button {
+                        ARManager.shared.actionStream.send(.addNode(option: Option(name: "Sweet", color: .green)))
+                    } label: {
+                        ZStack {
+                            Color.black
+                                .frame(width: 55, height: 55)
+                                .cornerRadius(8)
+                            Image(systemName: "plus.square")
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.title)
+                        }
                     }
-                    .buttonStyle(.borderedProminent)
+                    }
                 }
+                .padding()
             }
     }
 }

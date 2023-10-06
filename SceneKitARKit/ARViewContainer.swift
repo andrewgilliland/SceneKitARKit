@@ -41,20 +41,15 @@ struct ARViewContainer: UIViewRepresentable {
                 }
             }
         }
-
-        func addPoint(option: String) {
-            print("addPoint()")
-            print("\(option)")
-        }
-
+        
         func subscribeToActionStream() {
             ARManager.shared
                 .actionStream
                 .sink { [weak self] action in
 
                     switch action {
-                    case let .addPoint(option):
-                        self?.addPoint(option: option)
+                    case let .addNode(option):
+                        self?.addNode(option: option)
 
                     case .deleteLastPoint:
 
@@ -67,9 +62,31 @@ struct ARViewContainer: UIViewRepresentable {
                 }
                 .store(in: &cancellables)
         }
+
+        func addNode(option: Option) {
+            print("addPoint()")
+            
+            let screenCenter = CGPoint(x: sceneView.bounds.midX, y: sceneView.bounds.midY)
+            let hitTestResults = sceneView.hitTest(screenCenter, types: .featurePoint)
+                
+            print("\(hitTestResults)")
+            
+            if let hitResult = hitTestResults.first{
+                print("\(hitResult)")
+                let nodeGeometry = SCNSphere(radius: 0.008)
+                let material = SCNMaterial()
+                material.diffuse.contents = option.color
+                nodeGeometry.materials = [material]
+                
+                let node = SCNNode(geometry: nodeGeometry)
+                node.position = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
+                sceneView.scene.rootNode.addChildNode(node)
+    //            nodes.append(node)
+            }
+            
+        }
     }
 
-    
     func makeUIView(context: Context) -> ARSCNView {
         context.coordinator.sceneView
     }
@@ -79,4 +96,10 @@ struct ARViewContainer: UIViewRepresentable {
     func makeCoordinator() -> Coordinator {
         Coordinator()
     }
+}
+
+
+struct Option {
+    let name: String
+    let color: UIColor
 }
