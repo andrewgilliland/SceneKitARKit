@@ -36,9 +36,6 @@ struct ARViewContainer: UIViewRepresentable {
             coachingOverlay.setActive(true, animated: true)
 
             sceneView.addSubview(coachingOverlay)
-            
-            targetNode = addTarget()
-            sceneView.scene.rootNode.addChildNode(targetNode ?? SCNNode())
 
             subscribeToActionStream()
         }
@@ -54,21 +51,18 @@ struct ARViewContainer: UIViewRepresentable {
         }
         
         func renderer(_: SCNSceneRenderer, didUpdate _: SCNNode, for anchor: ARAnchor) {
-            
-            
             DispatchQueue.main.async {
-                self.updateTargetNodePosition()
-//                // Remove the previously added node if it exists
-//                self.targetNode?.removeFromParentNode()
-//                
-//                // Add a new node at the current frame's location
-//                let newTargetNode = self.addTarget()
-//                self.sceneView.scene.rootNode.addChildNode(newTargetNode)
-//                
-//                // Update the reference to the added node
-//                self.targetNode = newTargetNode
+                
+                // Remove the previously added node if it exists
+                self.targetNode?.removeFromParentNode()
+                
+                // Add a new node at the current frame's location
+                let newTargetNode = self.addTargetNode()
+                self.sceneView.scene.rootNode.addChildNode(newTargetNode)
+                
+                // Update the reference to the added node
+                self.targetNode = newTargetNode
             }
-            
         }
         
         func subscribeToActionStream() {
@@ -91,24 +85,41 @@ struct ARViewContainer: UIViewRepresentable {
         }
 
         func addNode(option: Option) {
-//            print("addPoint()")
-            
             let screenCenter = CGPoint(x: sceneView.bounds.midX, y: sceneView.bounds.midY)
-            let hitTestResults = sceneView.hitTest(screenCenter, types: .featurePoint)
+//            let hitTestResults = sceneView.hitTest(screenCenter, types: .featurePoint)
+//            if let hitResult = hitTestResults.first{
+//                let nodeGeometry = SCNSphere(radius: 0.008)
+//                let material = SCNMaterial()
+//                material.diffuse.contents = option.color
+//                nodeGeometry.materials = [material]
+//
+//                let node = SCNNode(geometry: nodeGeometry)
+//                node.position = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
+//                sceneView.scene.rootNode.addChildNode(node)
+//                nodes.append(node)
+//
+//                if nodes.count >= 2 {
+//                    calculate()
+//                }
+//            }
             
-            if let hitResult = hitTestResults.first{
-                let nodeGeometry = SCNSphere(radius: 0.008)
-                let material = SCNMaterial()
-                material.diffuse.contents = option.color
-                nodeGeometry.materials = [material]
+            if let raycastQuery = sceneView.raycastQuery(from: screenCenter, allowing: .estimatedPlane, alignment: .any) {
+                let results = sceneView.session.raycast(raycastQuery)
                 
-                let node = SCNNode(geometry: nodeGeometry)
-                node.position = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
-                sceneView.scene.rootNode.addChildNode(node)
-                nodes.append(node)
-                
-                if nodes.count >= 2 {
-                    calculate()
+                if let result = results.first {
+                    let nodeGeometry = SCNSphere(radius: 0.008)
+                    let material = SCNMaterial()
+                    material.diffuse.contents = option.color
+                    nodeGeometry.materials = [material]
+                    
+                    let node = SCNNode(geometry: nodeGeometry)
+                    node.position = SCNVector3(result.worldTransform.columns.3.x, result.worldTransform.columns.3.y, result.worldTransform.columns.3.z)
+                    sceneView.scene.rootNode.addChildNode(node)
+                    nodes.append(node)
+                    
+                    if nodes.count >= 2 {
+                        calculate()
+                    }
                 }
             }
         }
@@ -172,45 +183,26 @@ struct ARViewContainer: UIViewRepresentable {
             sceneView.scene.rootNode.addChildNode(outlineNode)
         }
         
-        func addTarget() -> SCNNode {
+        func addTargetNode() -> SCNNode {
             let screenCenter = CGPoint(x: sceneView.bounds.midX, y: sceneView.bounds.midY)
-            let hitTestResults = sceneView.hitTest(screenCenter, types: .featurePoint)
             
-            if let hitResult = hitTestResults.first{
-                let nodeGeometry = SCNSphere(radius: 0.008)
-                let material = SCNMaterial()
-                material.diffuse.contents = UIColor.purple
-                nodeGeometry.materials = [material]
-                
-                let node = SCNNode(geometry: nodeGeometry)
-                node.position = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
-                return node
-                
-            }
-            
-            if let raycastQuery = sceneView.raycastQuery(from: screenCenter, allowing: .estimatedPlane, alignment: .horizontal) {
+            if let raycastQuery = sceneView.raycastQuery(from: screenCenter, allowing: .estimatedPlane, alignment: .any) {
                 let results = sceneView.session.raycast(raycastQuery)
                 
-                print("results")
-                print("\(results)")
+                if let result = results.first {
+                    let nodeGeometry = SCNSphere(radius: 0.008)
+                    let material = SCNMaterial()
+                    material.diffuse.contents = UIColor.green
+                    nodeGeometry.materials = [material]
+                    
+                    let node = SCNNode(geometry: nodeGeometry)
+                    node.position = SCNVector3(result.worldTransform.columns.3.x, result.worldTransform.columns.3.y, result.worldTransform.columns.3.z)
+                    return node
+                }
             }
             
+            // if this returns disable add button
             return SCNNode()
-        }
-        
-        func updateTargetNodePosition() {
-            
-            guard let node = targetNode else {
-                return
-            }
-            
-            let screenCenter = CGPoint(x: sceneView.bounds.midX, y: sceneView.bounds.midY)
-            let hitTestResults = sceneView.hitTest(screenCenter, types: .featurePoint)
-            
-            if let hitResult = hitTestResults.first{
-                targetNode?.position = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
-                
-            }
         }
     }
 

@@ -14,7 +14,7 @@ struct MeasureView: View {
                         Spacer()
                     
                     Button {
-                        ARManager.shared.actionStream.send(.addNode(option: Option(name: "Sweet", color: .green)))
+                        ARManager.shared.actionStream.send(.addNode(option: Option(name: "Sweet", color: .red)))
                     } label: {
                         ZStack {
                             Color.black
