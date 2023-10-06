@@ -46,6 +46,8 @@ struct ARViewContainer: UIViewRepresentable {
         }
 
         func renderer(_: SCNSceneRenderer, didAdd _: SCNNode, for anchor: ARAnchor) {
+//            print("rendered: didAdd")
+            
             guard anchor is ARPlaneAnchor else { return }
             DispatchQueue.main.async {
                 self.coachingOverlay.setActive(false, animated: true)
@@ -57,8 +59,9 @@ struct ARViewContainer: UIViewRepresentable {
         }
         
         func renderer(_: SCNSceneRenderer, didUpdate _: SCNNode, for anchor: ARAnchor) {
+//            print("rendered: didUpdate")
+            
             DispatchQueue.main.async {
-                
                 // Remove the previously added node if it exists
                 self.targetNode?.removeFromParentNode()
                 
@@ -186,12 +189,13 @@ struct ARViewContainer: UIViewRepresentable {
                     
                     let node = SCNNode(geometry: nodeGeometry)
                     node.position = SCNVector3(result.worldTransform.columns.3.x, result.worldTransform.columns.3.y, result.worldTransform.columns.3.z)
+                    arObservable.onPlane = true
                     return node
                 }
             }
             
-            // if this returns disable add button
-            print("No raycast returned!!!")
+            // No plane detected
+            arObservable.onPlane = false
             return SCNNode()
         }
     }

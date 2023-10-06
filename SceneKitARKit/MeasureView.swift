@@ -11,36 +11,42 @@ struct MeasureView: View {
                 
                 if arObservable.coachingOverlayViewDidDeactivate {
                     
-                ZStack {
-                    Circle()
-                        .frame(width: 10, height: 10)
-                  
-                    VStack {
-                        Spacer()
-                        
-                        HStack {
-
+                    ZStack {
+                        if arObservable.onPlane {
+                            Circle()
+                                .frame(width: 10, height: 10)
+                        }
+                      
+                        VStack {
                             Spacer()
-                        
-                        Button {
-                            ARManager.shared.actionStream.send(.addNode(option: Option(name: "Sweet", color: .red)))
-                        } label: {
-                            ZStack {
-                                Color.black
-                                    .frame(width: 55, height: 55)
-                                    .cornerRadius(8)
-                                Image(systemName: "plus.square")
-                                    .foregroundColor(.white)
-                                    .fontWeight(.semibold)
-                                    .font(.title)
+                            
+                            HStack {
+
+                                Spacer()
+                            
+                            Button {
+                                ARManager.shared.actionStream.send(.addNode(option: Option(name: "Sweet", color: .red)))
+                            } label: {
+                                ZStack {
+                                    Color.black
+                                        .frame(width: 55, height: 55)
+                                        .cornerRadius(8)
+                                        .opacity(arObservable.onPlane ? 1.0 : 0.25)
+                                    Image(systemName: "plus.square")
+                                        .foregroundColor(.white)
+                                        .fontWeight(.semibold)
+                                        .font(.title)
+                                }
+                            }
+                            .disabled(!arObservable.onPlane)
                             }
                         }
-                        }
-                    }
-                    .padding()
-                    
+                        .padding()
                     }
                 }
+            }
+            .onAppear {
+                arObservable.coachingOverlayViewDidDeactivate = false
             }
     }
 }
