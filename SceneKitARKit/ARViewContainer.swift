@@ -21,7 +21,6 @@ struct ARViewContainer: UIViewRepresentable {
         override init() {
             super.init()
 
-            configuration
             configuration.environmentTexturing = .automatic
             configuration.planeDetection = [.horizontal]
             configuration.worldAlignment = ARConfiguration.WorldAlignment.gravity
@@ -37,6 +36,9 @@ struct ARViewContainer: UIViewRepresentable {
             coachingOverlay.setActive(true, animated: true)
 
             sceneView.addSubview(coachingOverlay)
+            
+            targetNode = addTarget()
+            sceneView.scene.rootNode.addChildNode(targetNode ?? SCNNode())
 
             subscribeToActionStream()
         }
@@ -55,15 +57,16 @@ struct ARViewContainer: UIViewRepresentable {
             
             
             DispatchQueue.main.async {
-                // Remove the previously added node if it exists
-                self.targetNode?.removeFromParentNode()
-                
-                // Add a new node at the current frame's location
-                let newTargetNode = self.addTarget()
-                self.sceneView.scene.rootNode.addChildNode(newTargetNode)
-                
-                // Update the reference to the added node
-                self.targetNode = newTargetNode
+                self.updateTargetNodePosition()
+//                // Remove the previously added node if it exists
+//                self.targetNode?.removeFromParentNode()
+//                
+//                // Add a new node at the current frame's location
+//                let newTargetNode = self.addTarget()
+//                self.sceneView.scene.rootNode.addChildNode(newTargetNode)
+//                
+//                // Update the reference to the added node
+//                self.targetNode = newTargetNode
             }
             
         }
@@ -185,7 +188,29 @@ struct ARViewContainer: UIViewRepresentable {
                 
             }
             
+            if let raycastQuery = sceneView.raycastQuery(from: screenCenter, allowing: .estimatedPlane, alignment: .horizontal) {
+                let results = sceneView.session.raycast(raycastQuery)
+                
+                print("results")
+                print("\(results)")
+            }
+            
             return SCNNode()
+        }
+        
+        func updateTargetNodePosition() {
+            
+            guard let node = targetNode else {
+                return
+            }
+            
+            let screenCenter = CGPoint(x: sceneView.bounds.midX, y: sceneView.bounds.midY)
+            let hitTestResults = sceneView.hitTest(screenCenter, types: .featurePoint)
+            
+            if let hitResult = hitTestResults.first{
+                targetNode?.position = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
+                
+            }
         }
     }
 
