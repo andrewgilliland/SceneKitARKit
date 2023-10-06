@@ -129,14 +129,17 @@ struct ARViewContainer: UIViewRepresentable {
             meter = Double(abs(distance))
             
             let mark = Measurement(value: meter ?? 0, unit: UnitLength.meters)
-            let toCM = mark.converted(to: UnitLength.centimeters)
-            
-            let value = "\(toCM)"
-            let finalValue = String(value.prefix(5)) + "CM"
+//            let toCM = mark.converted(to: UnitLength.centimeters)
+            let toINCH = mark.converted(to: UnitLength.inches)
+            let formatter = MeasurementFormatter()
+            formatter.unitOptions = .providedUnit
+            formatter.numberFormatter.maximumFractionDigits = 1
+
+            let inchString = formatter.string(from: toINCH)
             
             let centerPosition = getCenterPosition(position1: start.position, position2: end.position)
             
-            updateText(text: finalValue, atPosition: centerPosition)
+            updateText(text: inchString, atPosition: centerPosition)
             
             lineNode = LineNode(from: start.position, to: end.position, color: UIColor(white: 1.0, alpha: 0.5))
             
