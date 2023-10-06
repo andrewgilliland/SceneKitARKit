@@ -86,6 +86,10 @@ struct ARViewContainer: UIViewRepresentable {
                 node.position = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
                 sceneView.scene.rootNode.addChildNode(node)
                 nodes.append(node)
+                
+                if nodes.count >= 2 {
+                    calculate()
+                }
             }
         }
         
@@ -106,12 +110,12 @@ struct ARViewContainer: UIViewRepresentable {
             let value = "\(toCM)"
             let finalValue = String(value.prefix(5)) + "CM"
             
-//            updateText(text: finalValue, atPosition: end.position)
+            updateText(text: finalValue, atPosition: end.position)
             
-//            lineNode.removeFromParentNode()
-//            lineNode = LineNode(from: start.position, to: end.position, color: UIColor.white)
+            lineNode.removeFromParentNode()
+            lineNode = LineNode(from: start.position, to: end.position, color: UIColor.white)
             
-//            sceneView.scene.rootNode.addChildNode(lineNode)
+            sceneView.scene.rootNode.addChildNode(lineNode)
             
         }
         

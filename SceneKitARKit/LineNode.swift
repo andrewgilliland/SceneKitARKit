@@ -2,7 +2,7 @@ import SceneKit
 
 class LineNode: SCNNode {
     
-    init(from vectorA: SCNVector3, to vectorB: SCNVector3, lineColor color: UIColor) {
+    init(from vectorA: SCNVector3, to vectorB: SCNVector3, color: UIColor) {
         super.init()
         
         let height = self.distance(from: vectorA, to: vectorB)
