@@ -16,7 +16,7 @@ struct ARViewContainer: UIViewRepresentable {
         private var meter: Double?
         private var lineNode = SCNNode()
         private var textMeasure = SCNNode()
-        private var outlineNode = SCNNode()
+        private var textNode = SCNNode()
         
         private var targetNode: SCNNode?
         @ObservedObject var arObservable: ARObservable
@@ -134,7 +134,9 @@ struct ARViewContainer: UIViewRepresentable {
             let value = "\(toCM)"
             let finalValue = String(value.prefix(5)) + "CM"
             
-            updateText(text: finalValue, atPosition: end.position)
+            let centerPosition = getCenterPosition(position1: start.position, position2: end.position)
+            
+            updateText(text: finalValue, atPosition: centerPosition)
             
             lineNode = LineNode(from: start.position, to: end.position, color: UIColor(white: 1.0, alpha: 0.5))
             
@@ -143,36 +145,40 @@ struct ARViewContainer: UIViewRepresentable {
         }
         
         func updateText(text: String, atPosition position: SCNVector3) {
-            textMeasure.removeFromParentNode()
+//            textMeasure.removeFromParentNode()
             
-            let textGeometry = SCNText(string: text, extrusionDepth: 1.0)
-            textGeometry.font = UIFont.systemFont(ofSize: 10)
+//            let textGeometry = SCNText(string: text, extrusionDepth: 0.0)
+//            textGeometry.font = UIFont.systemFont(ofSize: 1)
             
-            let textOutline = SCNText(string: text, extrusionDepth: 0.5)
-            textOutline.font = UIFont.systemFont(ofSize: 10)
+//            let frontMaterial = SCNMaterial()
+//            frontMaterial.diffuse.contents = UIColor.blue
+//            textGeometry.firstMaterial = frontMaterial
             
-            let frontMaterial = SCNMaterial()
-            frontMaterial.diffuse.contents = UIColor.red
-            textGeometry.firstMaterial = frontMaterial
+//            let backMaterial = SCNMaterial()
+//            backMaterial.diffuse.contents = UIColor.white
+//            textGeometry.materials = [frontMaterial, backMaterial]
             
-            let backMaterial = SCNMaterial()
-            backMaterial.diffuse.contents = UIColor.black
-            textGeometry.materials = [frontMaterial, backMaterial]
+//            textMeasure = SCNNode(geometry: textGeometry)
+//            textMeasure.position = SCNVector3(x: position.x, y: position.y, z: position.z)
+//            textMeasure.scale = SCNVector3(x: 0.01, y: 0.01, z: 0.01)
             
-            textMeasure = SCNNode(geometry: textGeometry)
-            textMeasure.position = SCNVector3(x: position.x, y: position.y, z: position.z)
-            textMeasure.scale = SCNVector3(x: 0.01, y: 0.01, z: 0.01)
+            let textOutline = SCNText(string: text, extrusionDepth: 0.0)
+            textOutline.font = UIFont.systemFont(ofSize: 1)
             
             let outlineMaterial = SCNMaterial()
-            outlineMaterial.diffuse.contents = UIColor.black
+            outlineMaterial.diffuse.contents = UIColor.gray
             textOutline.firstMaterial = outlineMaterial
             
-            outlineNode = SCNNode(geometry: textOutline)
-            outlineNode.position = SCNVector3(x: position.x, y: position.y + 0.0148, z: position.z - 0.01)
-            outlineNode.scale = SCNVector3(x: 0.01, y: 0.01, z: 0.01)
+            textNode = SCNNode(geometry: textOutline)
+            textNode.position = SCNVector3(x: position.x, y: position.y, z: position.z - 0.01)
+            textNode.scale = SCNVector3(x: 0.01, y: 0.01, z: 0.01)
             
-            sceneView.scene.rootNode.addChildNode(textMeasure)
-            sceneView.scene.rootNode.addChildNode(outlineNode)
+            //  Radians = Degrees * (π / 180)
+            let angleInRadians: Float = 0.0 * (Float.pi / 180.0)
+            textNode.eulerAngles = SCNVector3(0, angleInRadians, 0)
+            
+//            sceneView.scene.rootNode.addChildNode(textMeasure)
+            sceneView.scene.rootNode.addChildNode(textNode)
         }
         
         func addTargetNode() -> SCNNode {
@@ -192,8 +198,6 @@ struct ARViewContainer: UIViewRepresentable {
                     
                     if let cameraNode = sceneView.pointOfView {
                         let distance = getDistance(from: cameraNode, to: node)
-                        print("distance from camera: \(distance)")
-                        
                         arObservable.distance = distance
                     }
                     
@@ -226,6 +230,14 @@ struct ARViewContainer: UIViewRepresentable {
                 pow(from.position.z - to.position.z, 2)
             )
             return distance
+        }
+        
+        func getCenterPosition(position1: SCNVector3, position2: SCNVector3) -> SCNVector3 {
+            let centerX = (position1.x + position2.x) / 2
+            let centerY = (position1.y + position2.y) / 2
+            let centerZ = (position1.z + position2.z) / 2
+            
+            return SCNVector3(centerX, centerY, centerZ)
         }
     }
 
