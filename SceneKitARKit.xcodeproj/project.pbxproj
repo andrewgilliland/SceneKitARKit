@@ -17,6 +17,7 @@
 		14D2472B2AD0398200B048DB /* MeasureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D2472A2AD0398200B048DB /* MeasureView.swift */; };
 		14D2472D2AD0605800B048DB /* LineNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D2472C2AD0605800B048DB /* LineNode.swift */; };
 		14D2472F2AD09EFD00B048DB /* ARObservable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D2472E2AD09EFD00B048DB /* ARObservable.swift */; };
+		14D247332AD42C8500B048DB /* Float+Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D247322AD42C8500B048DB /* Float+Conversion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		14D2472A2AD0398200B048DB /* MeasureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureView.swift; sourceTree = "<group>"; };
 		14D2472C2AD0605800B048DB /* LineNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineNode.swift; sourceTree = "<group>"; };
 		14D2472E2AD09EFD00B048DB /* ARObservable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARObservable.swift; sourceTree = "<group>"; };
+		14D247322AD42C8500B048DB /* Float+Conversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Float+Conversion.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,10 +71,11 @@
 				14D247262AD037D000B048DB /* ARManager.swift */,
 				14D247282AD0394D00B048DB /* ARAction.swift */,
 				14D2472A2AD0398200B048DB /* MeasureView.swift */,
-				14D2471A2AD033A300B048DB /* Assets.xcassets */,
-				14D2471C2AD033A300B048DB /* Preview Content */,
 				14D2472C2AD0605800B048DB /* LineNode.swift */,
 				14D2472E2AD09EFD00B048DB /* ARObservable.swift */,
+				14D2471A2AD033A300B048DB /* Assets.xcassets */,
+				14D2471C2AD033A300B048DB /* Preview Content */,
+				14D247322AD42C8500B048DB /* Float+Conversion.swift */,
 			);
 			path = SceneKitARKit;
 			sourceTree = "<group>";
@@ -162,6 +165,7 @@
 				14D247172AD033A200B048DB /* ContentView.swift in Sources */,
 				14D2472F2AD09EFD00B048DB /* ARObservable.swift in Sources */,
 				14D247152AD033A200B048DB /* AppDelegate.swift in Sources */,
+				14D247332AD42C8500B048DB /* Float+Conversion.swift in Sources */,
 				14D247252AD0364C00B048DB /* ARViewContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

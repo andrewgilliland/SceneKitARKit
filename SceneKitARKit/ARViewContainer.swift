@@ -21,6 +21,8 @@ struct ARViewContainer: UIViewRepresentable {
         private var targetNode: SCNNode?
         @ObservedObject var arObservable: ARObservable
         
+        private var targetLineNode: SCNNode?
+        
         init(arObservable: ARObservable) {
             self.arObservable = arObservable
             super.init()
@@ -40,6 +42,7 @@ struct ARViewContainer: UIViewRepresentable {
             coachingOverlay.setActive(true, animated: true)
 
             sceneView.addSubview(coachingOverlay)
+//            sceneView.showsStatistics = true
 
             subscribeToActionStream()
             
@@ -59,17 +62,26 @@ struct ARViewContainer: UIViewRepresentable {
         }
         
         func renderer(_: SCNSceneRenderer, didUpdate _: SCNNode, for anchor: ARAnchor) {
-//            print("rendered: didUpdate")
+            
             
             DispatchQueue.main.async {
                 // Remove the previously added node if it exists
                 self.targetNode?.removeFromParentNode()
+                self.targetLineNode?.removeFromParentNode()
                 
                 // Add a new node at the current frame's location
                 let newTargetNode = self.addTargetNode()
-                self.sceneView.scene.rootNode.addChildNode(newTargetNode)
                 
-                // Update the reference to the added node
+                if self.nodes.count > 0 {
+                    let newTargetLineNode = LineNode(from: self.nodes.last!.position, to: newTargetNode.position, color: .green)
+                    self.sceneView.scene.rootNode.addChildNode(newTargetLineNode)
+                    
+                    self.arObservable.distanceToLastNode = Float(newTargetLineNode.distance(from: self.nodes.last!.position, to: newTargetNode.position))
+                    
+                    // Update the reference to the added node
+                    self.targetLineNode = newTargetLineNode
+                }
+                self.sceneView.scene.rootNode.addChildNode(newTargetNode)
                 self.targetNode = newTargetNode
             }
         }
@@ -142,6 +154,9 @@ struct ARViewContainer: UIViewRepresentable {
             updateText(text: inchString, atPosition: centerPosition)
             
             lineNode = LineNode(from: start.position, to: end.position, color: UIColor(white: 1.0, alpha: 0.5))
+            print("Start position: \(start.position)")
+            print("End position: \(end.position)")
+            print("Target position: \(String(describing: targetNode?.position))")
             
             sceneView.scene.rootNode.addChildNode(lineNode)
             
@@ -209,7 +224,7 @@ struct ARViewContainer: UIViewRepresentable {
                 }
             }
             
-            // No plane detected
+            // Raycast fails, No plane detected
             arObservable.onPlane = false
             return SCNNode()
         }
