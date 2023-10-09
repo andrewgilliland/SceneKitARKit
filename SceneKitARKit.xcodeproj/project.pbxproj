@@ -73,9 +73,9 @@
 				14D2472A2AD0398200B048DB /* MeasureView.swift */,
 				14D2472C2AD0605800B048DB /* LineNode.swift */,
 				14D2472E2AD09EFD00B048DB /* ARObservable.swift */,
+				14D247322AD42C8500B048DB /* Float+Conversion.swift */,
 				14D2471A2AD033A300B048DB /* Assets.xcassets */,
 				14D2471C2AD033A300B048DB /* Preview Content */,
-				14D247322AD42C8500B048DB /* Float+Conversion.swift */,
 			);
 			path = SceneKitARKit;
 			sourceTree = "<group>";

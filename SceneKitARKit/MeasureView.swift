@@ -36,7 +36,22 @@ struct MeasureView: View {
                             Spacer()
                             
                             HStack {
-
+                                Button {
+                                    ARManager.shared.actionStream.send(.deleteLastNode)
+                                } label: {
+                                    ZStack {
+                                        Color.black
+                                            .frame(width: 55, height: 55)
+                                            .cornerRadius(8)
+                                            .opacity(1.0)
+                                        Image(systemName: "arrow.uturn.left")
+                                            .foregroundColor(.white)
+                                            .fontWeight(.semibold)
+                                            .font(.title)
+                                    }
+                                }
+                                
+                                
                                 Spacer()
                             
                             Button {

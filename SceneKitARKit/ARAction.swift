@@ -1,6 +1,6 @@
 
 enum ARAction {
     case addNode(option: Option)
-    case deleteLastPoint
+    case deleteLastNode
     case removeAllAnchors
 }

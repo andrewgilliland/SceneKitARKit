@@ -5,7 +5,6 @@ import SwiftUI
 struct ARViewContainer: UIViewRepresentable {
     @ObservedObject var arObservable: ARObservable
     
-    
     class Coordinator: NSObject, ARSCNViewDelegate {
         var sceneView = ARSCNView()
         private var configuration = ARWorldTrackingConfiguration()
@@ -13,15 +12,17 @@ struct ARViewContainer: UIViewRepresentable {
         private var cancellables: Set<AnyCancellable> = []
         
         private var nodes:[SCNNode] = []
+        private var lineNodes:[SCNNode] = []
+        private var textNodes:[SCNNode] = []
         private var meter: Double?
         private var lineNode = SCNNode()
-        private var textMeasure = SCNNode()
         private var textNode = SCNNode()
+//        private var textMeasure = SCNNode()
         
         private var targetNode: SCNNode?
+        private var targetLineNode: SCNNode?
         @ObservedObject var arObservable: ARObservable
         
-        private var targetLineNode: SCNNode?
         
         init(arObservable: ARObservable) {
             self.arObservable = arObservable
@@ -63,7 +64,6 @@ struct ARViewContainer: UIViewRepresentable {
         
         func renderer(_: SCNSceneRenderer, didUpdate _: SCNNode, for anchor: ARAnchor) {
             
-            
             DispatchQueue.main.async {
                 // Remove the previously added node if it exists
                 self.targetNode?.removeFromParentNode()
@@ -73,11 +73,12 @@ struct ARViewContainer: UIViewRepresentable {
                 let newTargetNode = self.addTargetNode()
                 
                 if self.nodes.count > 0 {
+                    // Create new LineNode
                     let newTargetLineNode = LineNode(from: self.nodes.last!.position, to: newTargetNode.position, color: .green)
+                    // Add new LineNode to scene
                     self.sceneView.scene.rootNode.addChildNode(newTargetLineNode)
-                    
+                    // Update the distance to last node to the distance of the LineNode
                     self.arObservable.distanceToLastNode = Float(newTargetLineNode.distance(from: self.nodes.last!.position, to: newTargetNode.position))
-                    
                     // Update the reference to the added node
                     self.targetLineNode = newTargetLineNode
                 }
@@ -95,9 +96,9 @@ struct ARViewContainer: UIViewRepresentable {
                     case let .addNode(option):
                         self?.addNode(option: option)
 
-                    case .deleteLastPoint:
-                        print("delete last node")
-
+                    case .deleteLastNode:
+                        self?.deleteLastNode()
+                        
                     case .removeAllAnchors:
                         print("delete all node")
                     }
@@ -121,6 +122,7 @@ struct ARViewContainer: UIViewRepresentable {
                     node.position = SCNVector3(result.worldTransform.columns.3.x, result.worldTransform.columns.3.y, result.worldTransform.columns.3.z)
                     sceneView.scene.rootNode.addChildNode(node)
                     nodes.append(node)
+                    
                     
                     if nodes.count >= 2 {
                         calculate()
@@ -154,12 +156,9 @@ struct ARViewContainer: UIViewRepresentable {
             updateText(text: inchString, atPosition: centerPosition)
             
             lineNode = LineNode(from: start.position, to: end.position, color: UIColor(white: 1.0, alpha: 0.5))
-            print("Start position: \(start.position)")
-            print("End position: \(end.position)")
-            print("Target position: \(String(describing: targetNode?.position))")
             
             sceneView.scene.rootNode.addChildNode(lineNode)
-            
+            lineNodes.append(lineNode)
         }
         
         func updateText(text: String, atPosition position: SCNVector3) {
@@ -197,6 +196,18 @@ struct ARViewContainer: UIViewRepresentable {
             
 //            sceneView.scene.rootNode.addChildNode(textMeasure)
             sceneView.scene.rootNode.addChildNode(textNode)
+            textNodes.append(textNode)
+        }
+        
+        func deleteLastNode() -> Void {
+            print("deleteLastNode")
+            let lastNode = self.nodes[nodes.count - 1]
+            let lastLineNode = self.lineNodes[lineNodes.count - 1]
+            let lastTextNode = self.textNodes[textNodes.count - 1]
+            
+            lastNode.removeFromParentNode()
+            lastLineNode.removeFromParentNode()
+            lastTextNode.removeFromParentNode()
         }
         
         func addTargetNode() -> SCNNode {

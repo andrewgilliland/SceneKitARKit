@@ -7,8 +7,6 @@ class LineNode: SCNNode {
         
         let height = self.distance(from: vectorA, to: vectorB)
         
-        print("Line Node Distance: \(height)")
-        
         self.position = vectorA
         let nodeVector2 = SCNNode()
         nodeVector2.position = vectorB
